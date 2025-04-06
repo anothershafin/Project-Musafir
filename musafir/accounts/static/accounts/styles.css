@@ -1,0 +1,36 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.full{
+    height: 100%;
+    width: 100%;
+    background-image: url("https://iili.io/37EdMGa.md.png");
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+}
+.nav{
+    height: 8%;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    padding-top: 20px;
+    background-color: rgba(59,59,59,0.7);
+}
+.hbuttons{
+    display: flex;
+    justify-content: flex-end; 
+    gap: 10px; 
+    padding: 20px;
+}
+.button{
+    width: 10%;
+    padding: 10px 30px;
+    cursor: pointer;
+    display: block;
+    background:  rgb(59,59,59);
+    border: 0;
+    outline: none;
+    border-radius: 30px;
+    color: white;
+}
