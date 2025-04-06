@@ -10,14 +10,39 @@
 <body>
     <div class="full">
         <h1 class="nav">Project Musafir: Your Ride Bus Journey Companion</h1>
-        Sign Up to Musafir to get going.
-        <div>
-            <button class="button">Sign Up</button>
-            
+        <h2 class="pghead">Sign Up to Musafir to get going.</h2>
+
+        <div class="form-box">
+
+            <div>
+                <form class="input-group">
+                <input type="text" class="input-field" placeholder="Name" required>
+                <br>
+                <input type="tel" class="input-field" placeholder="Phone Number" required>
+                <br>
+                <input type="text" class="input-field" placeholder="Email" required>
+                <br>
+                <label for="role">Choose your Account Type:</label>
+                <select name="role" id="role" class="input-field" required>
+                    <option value="">--Select Role--</option>
+                    <option value="psg">Passenger</option>
+                    <option value="drv">Driver</option>
+                </select>
+                <br>
+                <input type="text" class="input-field" placeholder="Password" required>
+                <br>
+                <input type="text" class="input-field" placeholder="Confirm Password" required>
+
+
+                </form>
+            </div>
+
+            <div class="signup-bttn">
+                <button class="button">Sign Up</button> 
+            </div> 
         </div>
 
     </div>
-
 
 </body>
 </html>

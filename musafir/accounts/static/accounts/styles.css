@@ -24,7 +24,7 @@
     padding: 20px;
 }
 .button{
-    width: 10%;
+    width: 200px;
     padding: 10px 30px;
     cursor: pointer;
     display: block;
@@ -33,4 +33,51 @@
     outline: none;
     border-radius: 30px;
     color: white;
+}
+.pghead{
+    text-align: center;
+    margin-top: 20px;
+}
+.form-box{
+    width: 400px;
+    height: 500px;
+    position: relative;
+    margin: 2% auto;
+    background: #bdbdbdde;
+    padding: 5px;
+    border-radius: 20px;
+}
+.input-group {
+    width: 80%;
+    margin: 0 auto;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.input-field{
+    width: 100%;
+    padding: 10px 0;
+    padding-left: 10px;
+    margin: 5px 0;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    border-bottom: 1px solid #999;
+    outline: none;
+    background: white;
+}
+.signup-bttn{
+    justify-self: center;
+    margin-top: 20px;
+    display: flex;
+}
+.login-form-box{
+    width: 400px;
+    height: 250px;
+    position: relative;
+    margin: 2% auto;
+    background: #bdbdbdde;
+    padding: 5px;
+    border-radius: 20px;
 }
