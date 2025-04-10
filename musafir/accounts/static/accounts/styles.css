@@ -81,3 +81,15 @@
     padding: 5px;
     border-radius: 20px;
 }
+.alter-login-signup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.alter-login-signup h3 {
+    margin-top: 0px;
+    margin-bottom: 20px;
+}

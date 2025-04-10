@@ -13,33 +13,34 @@
         <h2 class="pghead">Sign Up to Musafir to get going.</h2>
 
         <div class="form-box">
-
-            <div>
-                <form class="input-group">
-                <input type="text" class="input-field" placeholder="Name" required>
-                <br>
-                <input type="tel" class="input-field" placeholder="Phone Number" required>
-                <br>
-                <input type="text" class="input-field" placeholder="Email" required>
-                <br>
+            {% if error %}
+                <p style="color:red; text-align:center;">{{ error }}</p>
+            {% endif %}
+            <form method="POST" class="input-group">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="Username" class="input-field" required><br>
+                <input type="email" name="email" placeholder="Email" class="input-field" required><br>
+                <input type="tel" name="phone" placeholder="Phone Number" class="input-field" required><br>
+                
                 <label for="role">Choose your Account Type:</label>
                 <select name="role" id="role" class="input-field" required>
                     <option value="">--Select Role--</option>
                     <option value="psg">Passenger</option>
                     <option value="drv">Driver</option>
-                </select>
-                <br>
-                <input type="text" class="input-field" placeholder="Password" required>
-                <br>
-                <input type="text" class="input-field" placeholder="Confirm Password" required>
+                </select><br>
 
+                <input type="password" name="password" placeholder="Password" class="input-field" required><br>
+                <input type="password" name="confirm_password" placeholder="Confirm Password" class="input-field" required><br>
 
-                </form>
-            </div>
+                <div class="signup-bttn">
+                    <button type="submit" class="button">Sign Up</button> 
+                </div>
+            </form>
+        </div>
 
-            <div class="signup-bttn">
-                <button class="button">Sign Up</button> 
-            </div> 
+        <div class="alter-login-signup">
+            <h3>Already Have An Account?</h3>
+            <button class="button" onclick="window.location.href='{% url 'login' %}'">Login Instead</button>
         </div>
 
     </div>

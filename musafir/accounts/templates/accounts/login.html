@@ -15,16 +15,25 @@
         <div class="login-form-box">
 
             <div>
-                <form class="input-group">
-                    <input type="text" class="input-field" placeholder="Enter Email" required>
-                    <br>
-                    <input type="text" class="input-field" placeholder="Enter Password" required>
+                <form method="POST" class="input-group">
+                    {% csrf_token %}
+                    {% if error %}
+                        <p style="color:red;">{{ error }}</p>
+                    {% endif %}
+                    <input type="email" name="email" class="input-field" placeholder="Enter Email" required><br>
+                    <input type="password" name="password" class="input-field" placeholder="Enter Password" required><br>
+                
+                    <div class="signup-bttn">
+                        <button type="submit" class="button">Login</button> 
+                    </div> 
                 </form>
             </div>
 
-            <div class="signup-bttn">
-                <button class="button">Login</button> 
-            </div> 
+        </div>
+
+        <div class="alter-login-signup">
+            <h3>Don't Have An Account?</h3>
+            <button class="button" onclick="window.location.href='{% url 'signup' %}'">Register Here</button>
         </div>
 
     </div>
