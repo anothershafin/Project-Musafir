@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profile</title>
+    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}">
+</head>
+<body>
+    <div class="form-box">
+        <h2>User Profile</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="username" class="input-field" value="{{ user.username }}" required><br>
+            <input type="email" name="email" class="input-field" value="{{ user.email }}" required><br>
+            <input type="text" name="phone" class="input-field" value="{{ profile.phone }}" required><br>
+            <select name="role" class="input-field" required>
+                <option value="psg" {% if profile.role == 'psg' %}selected{% endif %}>Passenger</option>
+                <option value="drv" {% if profile.role == 'drv' %}selected{% endif %}>Driver</option>
+            </select><br>
+            <div class="signup-bttn">
+                <button type="submit" class="button">Update</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

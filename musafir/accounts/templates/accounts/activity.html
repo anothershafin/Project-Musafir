@@ -1,0 +1,16 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Activity Page</title>
+    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}">
+</head>
+<body>
+    <div class="form-box">
+        <h1>Welcome, {{ request.user.username }}!</h1>
+        <div class="signup-bttn">
+            <button class="button" onclick="window.location.href='{% url 'profile' %}'">Go to Profile</button>
+        </div>
+    </div>
+</body>
+</html>

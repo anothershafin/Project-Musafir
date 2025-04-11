@@ -2,6 +2,13 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from .models import UserProfile
+from django.contrib.auth.decorators import login_required
+#for api
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import SignupSerializer
 
 # Create your views here.
 def home(request):
@@ -12,7 +19,7 @@ def signup_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
-        phone = request.POST.get('phone')  # Not saved here unless you use a custom model
+        phone = request.POST.get('phone')  
         role = request.POST.get('role')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
@@ -24,10 +31,10 @@ def signup_view(request):
             return render(request, 'accounts/signup.html', {'error': "Username already exists"})
 
         user = User.objects.create_user(username=username, email=email, password=password)
-        # You can save role and phone in a profile model if you want to store them
-        login(request, user)  # auto-login after registration
+        UserProfile.objects.create(user=user, phone=phone, role=role)
+        login(request, user) 
 
-        return redirect('home')  # change to your homepage route
+        return redirect('activity')
 
     return render(request, 'accounts/signup.html')
 
@@ -52,3 +59,59 @@ def login_view(request):
 
 def activity_page(request):
     return HttpResponse("<h1>Welcome to Project Musafir Activity Page!</h1>")
+
+@login_required
+def profile_view(request):
+    profile = request.user.userprofile  # Access related profile
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        role = request.POST.get('role')
+
+        request.user.username = username
+        request.user.email = email
+        request.user.save()
+
+        profile.phone = phone
+        profile.role = role
+        profile.save()
+
+        return redirect('profile')
+
+    return render(request, 'accounts/profile.html', {
+        'user': request.user,
+        'profile': profile
+    })
+    
+@login_required
+def activity_page(request):
+    return render(request, 'accounts/activity.html')
+
+#for API
+@api_view(['POST'])
+def api_signup(request):
+    serializer = SignupSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message': 'Signup successful'}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def api_login(request):
+    from django.contrib.auth import authenticate
+    email = request.data.get('email')
+    password = request.data.get('password')
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({'error': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+    user = authenticate(username=user.username, password=password)
+    if user is not None:
+        return Response({'message': 'Login successful', 'username': user.username}, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
