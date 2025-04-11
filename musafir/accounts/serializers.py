@@ -18,3 +18,12 @@ class SignupSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data, password=password)
         UserProfile.objects.create(user=user, phone=phone, role=role)
         return user
+    
+#2fa
+class LoginRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+class OTPVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.CharField()

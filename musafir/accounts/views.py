@@ -8,7 +8,12 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import SignupSerializer
+from .serializers import SignupSerializer, LoginRequestSerializer, OTPVerifySerializer
+#2fa
+from django.core.mail import send_mail
+from .models import EmailOTP
+from django.contrib.auth import authenticate
+
 
 # Create your views here.
 def home(request):
@@ -115,3 +120,50 @@ def api_login(request):
         return Response({'message': 'Login successful', 'username': user.username}, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+def api_login_with_otp(request):
+    serializer = LoginRequestSerializer(data=request.data)
+    if serializer.is_valid():
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+
+        user = authenticate(username=user.username, password=password)
+        if user:
+            otp_obj, _ = EmailOTP.objects.get_or_create(user=user)
+            otp_obj.generate_otp()
+            send_mail(
+                subject='Your Musafir OTP Code',
+                message=f'Your OTP is {otp_obj.otp}. It will expire in 5 minutes.',
+                from_email='yourgmail@gmail.com',
+                recipient_list=[email],
+                fail_silently=False,
+            )
+            return Response({'message': 'OTP sent to your email'}, status=200)
+        else:
+            return Response({'error': 'Invalid password'}, status=400)
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['POST'])
+def api_verify_otp(request):
+    serializer = OTPVerifySerializer(data=request.data)
+    if serializer.is_valid():
+        email = serializer.validated_data['email']
+        otp = serializer.validated_data['otp']
+        try:
+            user = User.objects.get(email=email)
+            otp_obj = EmailOTP.objects.get(user=user)
+            if otp_obj.otp == otp:
+                if otp_obj.is_expired():
+                    return Response({'error': 'OTP expired'}, status=400)
+                return Response({'message': 'OTP verified. Login successful!'}, status=200)
+            else:
+                return Response({'error': 'Invalid OTP'}, status=400)
+        except (User.DoesNotExist, EmailOTP.DoesNotExist):
+            return Response({'error': 'Invalid request'}, status=400)
+    return Response(serializer.errors, status=400)

@@ -12,4 +12,6 @@ urlpatterns = [
     #for API
     path('api/signup/', views.api_signup, name='api_signup'),
     path('api/login/', views.api_login, name='api_login'),
+    path('api/login-otp/', views.api_login_with_otp, name='api_login_otp'),
+    path('api/verify-otp/', views.api_verify_otp, name='api_verify_otp'),
 ]
