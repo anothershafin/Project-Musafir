@@ -1,30 +1,34 @@
-{% load static %}
 <!DOCTYPE html>
-<html>
+{% load static %}
+<html lang="en">
 <head>
-    <title>User Profile</title>
+    <meta charset="UTF-8">
+    <title>Profile | Project Musafir</title>
     <link rel="stylesheet" href="{% static 'accounts/styles.css' %}">
 </head>
 <body>
     <div class="full">
         <h1 class="nav">Project Musafir: Your Ride Bus Journey Companion</h1>
+        <h2 class="pghead">{{ request.user.username }}'s Profile</h2>
 
-    <div class="form-box">
-        <h2 class="pagehead">User Profile</h2>
-        <form method="POST" class="input-group" >
-            {% csrf_token %}
-            <input type="text" name="username" class="input-field" value="{{ user.username }}" required><br>
-            <input type="email" name="email" class="input-field" value="{{ user.email }}" required><br>
-            <input type="text" name="phone" class="input-field" value="{{ profile.phone }}" required><br>
-            <select name="role" class="input-field" required>
-                <option value="psg" {% if profile.role == 'psg' %}selected{% endif %}>Passenger</option>
-                <option value="drv" {% if profile.role == 'drv' %}selected{% endif %}>Driver</option>
-            </select><br>
-            <div class="signup-bttn">
-                <button type="submit" class="button">Update</button>
+        <div class="form-box">
+            <div class="input-group">
+                <p class="input-field"><strong>Name:</strong> {{ user.username }}</p>
+                <p class="input-field"><strong>Email:</strong> {{ user.email }}</p>
+                <p class="input-field"><strong>Phone:</strong> {{ profile.phone }}</p>
+                <p class="input-field"><strong>Role:</strong> 
+                    {% if profile.role == 'psg' %}
+                        Passenger
+                    {% elif profile.role == 'drv' %}
+                        Driver
+                    {% endif %}
+                </p>
+                <br>
+                <a href="{% url 'profile_update' %}">
+                    <button class="button">Update Profile</button>
+                </a>
             </div>
-        </form>
-    </div>
+        </div>
     </div>
 </body>
 </html>

@@ -62,11 +62,16 @@ def login_view(request):
 
     return render(request, 'accounts/login.html')
 
-def activity_page(request):
-    return HttpResponse("<h1>Welcome to Project Musafir Activity Page!</h1>")
-
 @login_required
 def profile_view(request):
+    profile = request.user.userprofile
+    return render(request, 'accounts/profile.html', {
+        'user': request.user,
+        'profile': profile
+    })
+
+@login_required
+def profile_update(request):
     profile = request.user.userprofile  # Access related profile
 
     if request.method == 'POST':
@@ -85,7 +90,7 @@ def profile_view(request):
 
         return redirect('profile')
 
-    return render(request, 'accounts/profile.html', {
+    return render(request, 'accounts/profile_update.html', {
         'user': request.user,
         'profile': profile
     })

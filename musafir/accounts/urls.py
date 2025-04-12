@@ -8,6 +8,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('activity/', views.activity_page, name='activity'),
     path('profile/', views.profile_view, name='profile'),
+    path('profile/update/', views.profile_update, name='profile_update'),
     
     #for API
     path('api/signup/', views.api_signup, name='api_signup'),
