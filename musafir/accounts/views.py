@@ -11,8 +11,9 @@ from rest_framework import status
 from .serializers import SignupSerializer, LoginRequestSerializer, OTPVerifySerializer
 #2fa
 from django.core.mail import send_mail
-from .models import EmailOTP
+from .models import EmailOTP, UserProfile
 from django.contrib.auth import authenticate
+import random
 
 
 # Create your views here.
@@ -98,6 +99,43 @@ def profile_update(request):
 @login_required
 def activity_page(request):
     return render(request, 'accounts/activity.html')
+
+#2fa
+def send_otp(request):
+    user = request.user
+    otp, _ = EmailOTP.objects.get_or_create(user=user)
+    otp.generate_otp()
+
+    send_mail(
+        'Your OTP for 2-Step Verification',
+        f'Your OTP is: {otp.otp}',
+        'shafin.armstrong5@gmail.com',  
+        [user.email],
+        fail_silently=False,
+    )
+
+    return redirect('verify_otp')
+
+@login_required
+def verify_otp(request):
+    user = request.user
+    try:
+        otp_entry = EmailOTP.objects.get(user=user)
+    except EmailOTP.DoesNotExist:
+        return redirect('profile')
+
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        if entered_otp == otp_entry.otp and not otp_entry.is_expired():
+            profile = UserProfile.objects.get(user=user)
+            profile.is_two_step_verified = True
+            profile.save()
+            otp_entry.delete()  #otp clear er jonno
+            return redirect('profile')
+        else:
+            return render(request, 'accounts/verify_otp.html', {'error': 'Invalid or expired OTP'})
+
+    return render(request, 'accounts/verify_otp.html')
 
 #for API
 @api_view(['POST'])

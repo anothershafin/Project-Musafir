@@ -15,4 +15,8 @@ urlpatterns = [
     path('api/login/', views.api_login, name='api_login'),
     path('api/login-otp/', views.api_login_with_otp, name='api_login_otp'),
     path('api/verify-otp/', views.api_verify_otp, name='api_verify_otp'),
+    
+    #for 2fa
+    path('send-otp/', views.send_otp, name='send_otp'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
 ]

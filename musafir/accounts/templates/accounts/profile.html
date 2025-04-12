@@ -9,7 +9,7 @@
 <body>
     <div class="full">
         <h1 class="nav">Project Musafir: Your Ride Bus Journey Companion</h1>
-        <h2 class="pghead">{{ request.user.username }}'s Profile</h2>
+        <h2 class="pagehead">{{ request.user.username }}'s Profile</h2>
 
         <div class="form-box">
             <div class="input-group">
@@ -28,6 +28,18 @@
                     <button class="button">Update Profile</button>
                 </a>
             </div>
+        </div>
+
+        <div>
+            {% if not user.userprofile.is_two_step_verified %}
+                <p class="warning-text">Your account is not verified. Turn on 2 Step Verification now.</p>
+                <form action="{% url 'send_otp' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="verify-btn">Turn On</button>
+                </form>
+            {% else %}
+                <p class="success-text">Your profile is secured.</p>
+            {% endif %}
         </div>
     </div>
 </body>

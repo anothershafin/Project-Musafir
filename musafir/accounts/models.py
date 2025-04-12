@@ -4,11 +4,13 @@ import random
 import string
 from datetime import datetime, timedelta
 from django.utils import timezone
+
 # Create your models here.
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=20)
     role = models.CharField(max_length=10, choices=[('psg', 'Passenger'), ('drv', 'Driver')])
+    is_two_step_verified = models.BooleanField(default=False)  # 👈 Add this here
 
     def __str__(self):
         return self.user.username
@@ -25,3 +27,5 @@ class EmailOTP(models.Model):
         self.otp = ''.join(random.choices(string.digits, k=6))
         self.created_at = datetime.now()
         self.save()
+        
+        
