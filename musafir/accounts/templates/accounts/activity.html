@@ -6,11 +6,22 @@
     <link rel="stylesheet" href="{% static 'accounts/styles.css' %}">
 </head>
 <body>
-    <div class="form-box">
-        <h1>Welcome, {{ request.user.username }}!</h1>
-        <div class="signup-bttn">
+    <div class="full">
+        <h1 class="nav">Project Musafir: Your Ride Bus Journey Companion</h1>
+        
+        <div class="pagehead">
+            <h1>Welcome, {{ request.user.username }} !</h1>
+            <h3>Your journey starts here</h3>
+        </div>
+
+        <div class="hbuttons">
             <button class="button" onclick="window.location.href='{% url 'profile' %}'">Go to Profile</button>
         </div>
-    </div>
+
+        <div class="float-box"> 
+            <h2>  Our Services:</h2>
+        </div>
+</div>
+
 </body>
 </html>

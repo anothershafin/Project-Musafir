@@ -93,3 +93,17 @@
     margin-top: 0px;
     margin-bottom: 20px;
 }
+.pagehead{
+    text-align: center;
+    align-self: center;
+    margin-top: 10px;
+}
+.float-box{
+    width: 80%;
+    height: 500px;
+    position: relative;
+    margin: 2% auto;
+    background: #bdbdbdde;
+    padding: 5px;
+    border-radius: 20px;
+}
