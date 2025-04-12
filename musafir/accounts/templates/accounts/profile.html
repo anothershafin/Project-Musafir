@@ -8,7 +8,22 @@
 </head>
 <body>
     <div class="full">
-        <h1 class="nav">Project Musafir: Your Ride Bus Journey Companion</h1>
+        <div class="nav">
+            <div class="nav-center">
+                <h1>Project Musafir: Your Ride Bus Journey Companion</h1>
+            </div>
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button class="button" type="submit">Logout</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="hbuttons">
+            <button class="button" onclick="window.location.href='{% url 'activity' %}'">Activity Home</button>
+        </div>
+
         <h2 class="pagehead">{{ request.user.username }}'s Profile</h2>
 
         <div class="form-box">

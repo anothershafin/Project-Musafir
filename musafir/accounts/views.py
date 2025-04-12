@@ -14,6 +14,8 @@ from django.core.mail import send_mail
 from .models import EmailOTP, UserProfile
 from django.contrib.auth import authenticate
 import random
+#logout
+from django.contrib.auth import logout
 
 
 # Create your views here.
@@ -136,6 +138,10 @@ def verify_otp(request):
             return render(request, 'accounts/verify_otp.html', {'error': 'Invalid or expired OTP'})
 
     return render(request, 'accounts/verify_otp.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
 
 #for API
 @api_view(['POST'])

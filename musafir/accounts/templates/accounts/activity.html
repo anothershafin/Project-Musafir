@@ -7,7 +7,17 @@
 </head>
 <body>
     <div class="full">
-        <h1 class="nav">Project Musafir: Your Ride Bus Journey Companion</h1>
+        <div class="nav">
+            <div class="nav-center">
+                <h1>Project Musafir: Your Ride Bus Journey Companion</h1>
+            </div>
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button class="button" type="submit">Logout</button>
+            </form>
+            {% endif %}
+        </div>
         
         <div class="pagehead">
             <h1>Welcome, {{ request.user.username }} !</h1>
@@ -20,6 +30,14 @@
 
         <div class="float-box"> 
             <h2>  Our Services:</h2>
+        </div>
+
+        <div class="float-box"> 
+            <h2>  Your Past Rides:</h2>
+        </div>
+
+        <div class="float-box"> 
+            <h2>  Emergency Alerts:</h2>
         </div>
 </div>
 
