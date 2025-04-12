@@ -5,10 +5,11 @@ from django.contrib.auth import authenticate, login
 from .models import UserProfile
 from django.contrib.auth.decorators import login_required
 #for api
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view , permission_classes 
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import SignupSerializer, LoginRequestSerializer, OTPVerifySerializer
+from .serializers import SignupSerializer, LoginRequestSerializer, OTPVerifySerializer, UserProfileSerializer
+from rest_framework.permissions import IsAuthenticated
 #2fa
 from django.core.mail import send_mail
 from .models import EmailOTP, UserProfile
@@ -155,20 +156,20 @@ def api_signup(request):
 
 @api_view(['POST'])
 def api_login(request):
-    from django.contrib.auth import authenticate
     email = request.data.get('email')
     password = request.data.get('password')
 
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
-        return Response({'error': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'User with this email does not exist'}, status=404)
 
-    user = authenticate(username=user.username, password=password)
+    user = authenticate(request, username=user.username, password=password)
     if user is not None:
-        return Response({'message': 'Login successful', 'username': user.username}, status=status.HTTP_200_OK)
+        login(request, user)  # ✅ This is what creates sessionid
+        return Response({'message': 'Login successful', 'username': user.username}, status=200)
     else:
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Invalid credentials'}, status=400)
     
 @api_view(['POST'])
 def api_login_with_otp(request):
@@ -188,7 +189,7 @@ def api_login_with_otp(request):
             send_mail(
                 subject='Your Musafir OTP Code',
                 message=f'Your OTP is {otp_obj.otp}. It will expire in 5 minutes.',
-                from_email='yourgmail@gmail.com',
+                from_email='shafin.armstrong5@gmail.com',
                 recipient_list=[email],
                 fail_silently=False,
             )
@@ -216,3 +217,11 @@ def api_verify_otp(request):
         except (User.DoesNotExist, EmailOTP.DoesNotExist):
             return Response({'error': 'Invalid request'}, status=400)
     return Response(serializer.errors, status=400)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def api_profile_view(request):
+    profile = request.user.userprofile
+    serializer = UserProfileSerializer(profile)
+    return Response(serializer.data)
+

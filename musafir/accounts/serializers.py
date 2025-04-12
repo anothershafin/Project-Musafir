@@ -27,3 +27,25 @@ class LoginRequestSerializer(serializers.Serializer):
 class OTPVerifySerializer(serializers.Serializer):
     email = serializers.EmailField()
     otp = serializers.CharField()
+    
+class UserProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    email = serializers.EmailField(source='user.email')
+
+    class Meta:
+        model = UserProfile
+        fields = ['username', 'email', 'phone', 'role']
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {})
+        if 'username' in user_data:
+            instance.user.username = user_data['username']
+        if 'email' in user_data:
+            instance.user.email = user_data['email']
+        instance.user.save()
+
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.role = validated_data.get('role', instance.role)
+        instance.save()
+
+        return instance
