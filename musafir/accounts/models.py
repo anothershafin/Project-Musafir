@@ -11,7 +11,10 @@ class UserProfile(models.Model):
     phone = models.CharField(max_length=20)
     role = models.CharField(max_length=10, choices=[('psg', 'Passenger'), ('drv', 'Driver')])
     is_two_step_verified = models.BooleanField(default=False)  # 👈 Add this here
-
+    emergency_contact = models.CharField(max_length=15, blank=True, null=True)  # New field
+    emergency_message = models.TextField(blank=True, null=True)  # New field
+    
+    
     def __str__(self):
         return self.user.username
     

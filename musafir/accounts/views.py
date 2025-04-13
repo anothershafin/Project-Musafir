@@ -90,6 +90,8 @@ def profile_update(request):
 
         profile.phone = phone
         profile.role = role
+        profile.emergency_contact = request.POST.get('emergency_contact')
+        profile.emergency_message = request.POST.get('emergency_message')
         profile.save()
 
         return redirect('profile')
