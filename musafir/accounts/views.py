@@ -19,6 +19,13 @@ import random
 from django.contrib.auth import logout
 
 
+#from twilio.rest import Client
+
+from django.core.mail import send_mail
+
+from .models import Ride
+
+
 # Create your views here.
 def home(request):
     return render(request, 'accounts/home.html')
@@ -90,6 +97,8 @@ def profile_update(request):
 
         profile.phone = phone
         profile.role = role
+        profile.emergency_contact = request.POST.get('emergency_contact')
+        profile.emergency_message = request.POST.get('emergency_message')
         profile.save()
 
         return redirect('profile')
@@ -225,3 +234,34 @@ def api_profile_view(request):
     serializer = UserProfileSerializer(profile)
     return Response(serializer.data)
 
+##############################################################################
+
+@login_required
+def send_emergency_email(request):
+    # Recipient's email address (e.g., from the user's profile)
+    recipient_email = request.user.email  # Or use a custom field if needed
+    emergency_contact_email = request.user.userprofile.emergency_contact  # Optional: Add an email field for emergency contact
+
+    # Email subject and message
+    subject = "Emergency Alert"
+    message = f"Emergency Alert: {request.user.username} has triggered an emergency alert!"
+    from_email = 'your_email@gmail.com'  # Replace with your email
+
+    # Send email
+    try:
+        send_mail(
+            subject,
+            message,
+            from_email,
+            [recipient_email], 
+            fail_silently=False,
+        )
+        return HttpResponse("Emergency email sent successfully!")
+    except Exception as e:
+        return HttpResponse(f"Failed to send emergency email: {str(e)}", status=500)
+
+@login_required
+def activity_view(request):
+    # Fetch past rides for the logged-in user
+    past_rides = Ride.objects.filter(user=request.user).order_by('-date')  # Adjust based on your model
+    return render(request, 'accounts/activity.html', {'past_rides': past_rides})

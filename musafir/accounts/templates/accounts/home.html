@@ -1,23 +1,47 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
-    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}" />
+  </head>
+  <body>
     <div class="full">
-        <h1 class="nav">Project Musafir: Your Ride Bus Journey Companion</h1>
-        
-        <div class="hbuttons">
-            <button class="button" onclick="window.location.href='{% url 'login' %}'">Login</button>
-            <button class="button" onclick="window.location.href='{% url 'signup' %}'">Sign Up</button>
-        </div>
+      <h1 class="nav">Project Musafir: Your Ride Bus Journey Companion</h1>
 
+      <div class="hbuttons">
+        {% if user.is_authenticated %}
+        <!-- Show 'Go to Profile' button when logged in -->
+        <button
+          class="button"
+          onclick="window.location.href='{% url 'profile' %}'"
+        >
+          Go to Profile
+        </button>
+        <button
+          class="button"
+          onclick="window.location.href='{% url 'send_emergency_email' %}'"
+        >
+          Send Emergency Text
+        </button>
+        {% else %}
+        <!-- Show 'Login' and 'Sign Up' buttons when logged out -->
+        <button
+          class="button"
+          onclick="window.location.href='{% url 'login' %}'"
+        >
+          Login
+        </button>
+        <button
+          class="button"
+          onclick="window.location.href='{% url 'signup' %}'"
+        >
+          Sign Up
+        </button>
+        {% endif %}
+      </div>
     </div>
-
-
-</body>
+  </body>
 </html>
