@@ -13,11 +13,9 @@ class UserProfile(models.Model):
     role = models.CharField(max_length=10, choices=[('psg', 'Passenger'), ('drv', 'Driver')])
     is_two_step_verified = models.BooleanField(default=False)  # 👈 Add this here
     emergency_contact = models.CharField(
-        max_length=15,
+        max_length=154,
         blank=True,
-        null=True,
-        validators=[RegexValidator(regex=r'^\+?[1-9]\d{1,14}$', message="Phone number must be in E.164 format.")]
-    )
+        null=True,)
     emergency_message = models.TextField(blank=True, null=True)  # New field
     
     

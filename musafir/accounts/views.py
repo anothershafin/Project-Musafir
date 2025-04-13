@@ -26,6 +26,7 @@ from django.core.mail import send_mail
 from .models import Ride
 
 
+
 # Create your views here.
 def home(request):
     return render(request, 'accounts/home.html')
@@ -244,7 +245,7 @@ def send_emergency_email(request):
 
     # Email subject and message
     subject = "Emergency Alert"
-    message = f"Emergency Alert: {request.user.username} has triggered an emergency alert!"
+    message =  request.user.userprofile.emergency_message 
     from_email = 'your_email@gmail.com'  # Replace with your email
 
     # Send email
