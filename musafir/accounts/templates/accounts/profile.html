@@ -1,61 +1,77 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Profile | Project Musafir</title>
-    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}" />
+  </head>
+  <body>
     <div class="full">
-        <div class="nav">
-            <div class="nav-center">
-                <h1>Project Musafir: Your Ride Bus Journey Companion</h1>
-            </div>
-            {% if user.is_authenticated %}
-            <form method="post" action="{% url 'logout' %}" class="logout-form">
-                {% csrf_token %}
-                <button class="button" type="submit">Logout</button>
-            </form>
-            {% endif %}
+      <div class="nav">
+        <div class="nav-center">
+          <h1>Project Musafir: Your Ride Bus Journey Companion</h1>
         </div>
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" class="logout-form">
+          {% csrf_token %}
+          <button class="button" type="submit">Logout</button>
+        </form>
+        {% endif %}
+      </div>
 
-        <div class="hbuttons">
-            <button class="button" onclick="window.location.href='{% url 'activity' %}'">Activity Home</button>
+      <div class="hbuttons">
+        <button class="button" onclick="window.location.href='/'">
+          Go to Homepage
+        </button>
+        <button
+          class="button"
+          onclick="window.location.href='{% url 'activity' %}'"
+        >
+          Activity Home
+        </button>
+      </div>
+
+      <h2 class="pagehead">{{ request.user.username }}'s Profile</h2>
+
+      <div class="form-box">
+        <div class="input-group">
+          <p class="input-field"><strong>Name:</strong> {{ user.username }}</p>
+          <p class="input-field"><strong>Email:</strong> {{ user.email }}</p>
+          <p class="input-field"><strong>Phone:</strong> {{ profile.phone }}</p>
+          <p class="input-field">
+            <strong>Role:</strong>
+            {% if profile.role == 'psg' %} Passenger {% elif profile.role ==
+            'drv' %} Driver {% endif %}
+          </p>
+          <p class="input-field">
+            <strong>Emergency Contact:</strong> {{ profile.emergency_contact }}
+          </p>
+          <!-- New field -->
+          <p class="input-field">
+            <strong>Emergency Message:</strong> {{ profile.emergency_message }}
+          </p>
+          <!-- New field -->
+          <br />
+          <a href="{% url 'profile_update' %}">
+            <button class="button">Update Profile</button>
+          </a>
         </div>
+      </div>
 
-        <h2 class="pagehead">{{ request.user.username }}'s Profile</h2>
-
-        <div class="form-box">
-            <div class="input-group">
-                <p class="input-field"><strong>Name:</strong> {{ user.username }}</p>
-                <p class="input-field"><strong>Email:</strong> {{ user.email }}</p>
-                <p class="input-field"><strong>Phone:</strong> {{ profile.phone }}</p>
-                <p class="input-field"><strong>Role:</strong> 
-                    {% if profile.role == 'psg' %}
-                        Passenger
-                    {% elif profile.role == 'drv' %}
-                        Driver
-                    {% endif %}
-                </p>
-                <br>
-                <a href="{% url 'profile_update' %}">
-                    <button class="button">Update Profile</button>
-                </a>
-            </div>
-        </div>
-
-        <div>
-            {% if not user.userprofile.is_two_step_verified %}
-                <p class="warning-text">Your account is not verified. Turn on 2 Step Verification now.</p>
-                <form action="{% url 'send_otp' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="verify-btn">Turn On</button>
-                </form>
-            {% else %}
-                <p class="success-text">Your profile is secured.</p>
-            {% endif %}
-        </div>
+      <div>
+        {% if not user.userprofile.is_two_step_verified %}
+        <p class="warning-text">
+          Your account is not verified. Turn on 2 Step Verification now.
+        </p>
+        <form action="{% url 'send_otp' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="verify-btn">Turn On</button>
+        </form>
+        {% else %}
+        <p class="success-text">Your profile is secured.</p>
+        {% endif %}
+      </div>
     </div>
-</body>
+  </body>
 </html>

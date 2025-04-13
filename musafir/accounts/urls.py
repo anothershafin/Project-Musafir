@@ -23,4 +23,7 @@ urlpatterns = [
     
     #logout
     path('logout/', views.logout_view, name='logout'),
+    #path('send-emergency-text/', views.send_emergency_text, name='send_emergency_text'),
+    path('send-emergency-email/', views.send_emergency_email, name='send_emergency_email'),
+    path('activity/', views.activity_view, name='activity'),
 ]
