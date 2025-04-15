@@ -235,7 +235,7 @@ def api_profile_view(request):
     return Response(serializer.data)
 
 ##############################################################################
-
+#emergency email functions
 @login_required
 def send_emergency_email(request):
     # Recipient's email address (e.g., from the user's profile)
