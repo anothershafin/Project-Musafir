@@ -27,6 +27,14 @@ from .models import Ride
 
 
 
+import cv2
+import pytesseract
+import re
+from django.shortcuts import render
+from django.core.files.storage import FileSystemStorage
+
+
+
 # Create your views here.
 def home(request):
     return render(request, 'accounts/home.html')
@@ -266,3 +274,67 @@ def activity_view(request):
     # Fetch past rides for the logged-in user
     past_rides = Ride.objects.filter(user=request.user).order_by('-date')  # Adjust based on your model
     return render(request, 'accounts/activity.html', {'past_rides': past_rides})
+
+
+
+
+
+def new_page_view(request):
+    return render(request, 'accounts/new_page.html')
+
+
+def upload_image(request):
+    student_id = None
+    error_message = None
+
+    if request.method == "POST" and request.FILES.get("image"):
+        if request.user.is_authenticated and request.user.userprofile.is_student:
+            error_message = "Already verified"
+        else:
+            # Save the uploaded file
+            image_file = request.FILES["image"]
+            fs = FileSystemStorage()
+            file_path = fs.save(image_file.name, image_file)
+            file_url = fs.path(file_path)
+
+            try:
+                # Load the image using OpenCV
+                image = cv2.imread(file_url)
+
+                if image is None:
+                    error_message = "Error: Could not load the uploaded image."
+                else:
+                    # Convert the image to grayscale
+                    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+                    # Apply thresholding to improve text contrast
+                    _, thresh_image = cv2.threshold(gray_image, 150, 255, cv2.THRESH_BINARY)
+
+                    # Perform OCR on the preprocessed image
+                    extracted_text = pytesseract.image_to_string(thresh_image)
+
+                    # Use regex to find an 8-digit student ID
+                    match = re.search(r'\b\d{8}\b', extracted_text)
+                    if match:
+                        student_id = match.group()
+                        # Set the is_student flag to True for the logged-in user
+                        if request.user.is_authenticated:
+                            user_profile = request.user.userprofile
+                            user_profile.is_student = True
+                            user_profile.save()
+                    else:
+                        error_message = "No 8-digit student ID found in the image. Please try again."
+
+            except Exception as e:
+                error_message = f"An error occurred: {str(e)}"
+
+            # Delete the uploaded file after processing
+            fs.delete(file_path)
+
+        return render(request, "accounts/new_page.html", {"student_id": student_id, "error_message": error_message})
+
+
+
+
+
+

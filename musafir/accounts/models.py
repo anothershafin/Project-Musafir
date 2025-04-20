@@ -17,7 +17,7 @@ class UserProfile(models.Model):
         blank=True,
         null=True,)
     emergency_message = models.TextField(blank=True, null=True)  # New field
-    
+    is_student = models.BooleanField(default=False)  
     
     def __str__(self):
         return self.user.username

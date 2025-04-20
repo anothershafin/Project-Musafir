@@ -181,3 +181,9 @@
   background-color: #f2f2f2;
   font-weight: bold;
 }
+
+button.verified {
+  background-color: #4caf50; /* Green */
+  color: white;
+  cursor: not-allowed;
+}
