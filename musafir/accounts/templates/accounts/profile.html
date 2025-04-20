@@ -41,8 +41,11 @@
           <p class="input-field"><strong>Phone:</strong> {{ profile.phone }}</p>
           <p class="input-field">
             <strong>Role:</strong>
-            {% if profile.role == 'psg' %} Passenger {% elif profile.role ==
-            'drv' %} Driver {% endif %}
+            {% if profile.role == 'psg' %}
+              Passenger
+            {% elif profile.role == 'drv' %}
+              Driver
+            {% endif %}
           </p>
           <p class="input-field">
             <strong>Emergency Contact:</strong> {{ profile.emergency_contact }}
