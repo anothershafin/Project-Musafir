@@ -33,6 +33,15 @@
                 <option value="psg" {% if profile.role == 'psg' %}selected{% endif %}>Passenger</option>
                 <option value="drv" {% if profile.role == 'drv' %}selected{% endif %}>Driver</option>
             </select><br>
+            <input type="text" name="emergency_contact" class="input-field" value="{{ profile.emergency_contact }}" placeholder="Emergency Contact"><br>
+            <textarea name="emergency_message" class="input-field" placeholder="Emergency Message">{{ profile.emergency_message }}</textarea><br>
+            <div class="hbuttons">
+                {% if profile.is_student %}
+                    <button type="button" class="button verified" disabled>Verified as a student</button>
+                {% else %}
+                    <button type="button" class="button" onclick="window.location.href='{% url 'new_page' %}'">Verify Student Status</button>
+                {% endif %}
+            </div>
             <div class="signup-bttn">
                 <button type="submit" class="button">Update</button>
             </div>
