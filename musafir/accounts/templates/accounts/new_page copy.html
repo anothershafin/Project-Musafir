@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Upload Image</title>
+    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}" />
+  </head>
+  <body>
+    <div class="full">
+      <div class="nav">
+        <div class="nav-center">
+          <h1>Upload Your Image</h1>
+        </div>
+      </div>
+
+      <div class="form-box">
+        <h2 class="pagehead">Submit a JPG Image</h2>
+        <form method="POST" enctype="multipart/form-data" action="{% url 'upload_image' %}">
+          {% csrf_token %}
+          <input
+            type="file"
+            name="image"
+            accept=".jpg"
+            class="input-field"
+            required
+          /><br />
+          <button type="submit" class="button">Upload</button>
+        </form>
+
+        {% if student_id %}
+        <p class="success">Student ID: {{ student_id }}</p>
+        {% elif error_message %}
+        <p class="error">No 8-digit student ID found in the image.</p>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
