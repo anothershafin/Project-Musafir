@@ -37,8 +37,12 @@ from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
 def home(request):
-    return render(request, 'accounts/home.html')
-
+    # Example static coordinates for now
+    bus_data = [
+        {"name": "Bus 1", "lat": 23.8103, "lon": 90.4125},
+        {"name": "Bus 2", "lat": 23.8150, "lon": 90.4200},
+    ]
+    return render(request, 'accounts/home.html', {"bus_data": bus_data})
 
 def signup_view(request):
     if request.method == 'POST':
@@ -337,4 +341,12 @@ def upload_image(request):
 
 
 
+# Map view for bus tracking
 
+def map_view(request):
+    # Example static coordinates for now
+    bus_data = [
+        {"name": "Bus 1", "lat": 23.8103, "lon": 90.4125},
+        {"name": "Bus 2", "lat": 23.8150, "lon": 90.4200},
+    ]
+    return render(request, 'accounts/map.html', {"bus_data": bus_data})
