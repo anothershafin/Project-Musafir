@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Profile | Project Musafir</title>
+    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}" />
+</head>
+<body>
+    <div class="full">
+
+        <div class="nav">
+
+            <div class="nav-center">
+                <h1>Project Musafir: Your Ride Bus Journey Companion</h1>
+            </div>
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button class="button" type="submit">Logout</button>
+                </form>
+            {% endif %}
+
+        </div>
+
+        <div class="hbuttons">
+            <button class="button" onclick="window.location.href='/'">
+            Go to Homepage
+            </button>
+
+            <button class="button" onclick="window.location.href='{% url 'activity' %}'">
+            Activity Home
+            </button>
+        </div>
+
+        <h2 class="pagehead">Add Your Bus Info </h2>
+
+        <div class="form-box-bus">
+            <form method="POST" class="input-group">
+                {% csrf_token %}
+                <input type="text" name="bus_name" class="input-field" placeholder="Bus Name" required><br>
+                <input type="text" name="route" class="input-field" placeholder="Route" required><br>
+                <input type="text" name="stoppage1" class="input-field" placeholder="Stoppage 1" required><br>
+                <input type="text" name="stoppage2" class="input-field" placeholder="Stoppage 2" required><br>
+                <input type="text" name="stoppage3" class="input-field" placeholder="Stoppage 3" required><br>
+                <input type="number" name="total_seats" class="input-field" placeholder="Total Seats" required><br>
+                <input type="number" name="vacant_seats" class="input-field" placeholder="Vacant Seats" required><br>
+                <input type="text" name="current_location" class="input-field" placeholder="Current Location"><br>
+
+                <div class="signup-bttn">
+                    <button type="submit" class="button">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+  </body>
+</html>

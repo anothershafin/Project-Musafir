@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Profile | Project Musafir</title>
+    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}" />
+</head>
+<body>
+    <div class="full">
+
+        <div class="nav">
+
+            <div class="nav-center">
+                <h1>Project Musafir: Your Ride Bus Journey Companion</h1>
+            </div>
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button class="button" type="submit">Logout</button>
+                </form>
+            {% endif %}
+
+        </div>
+
+        <div class="hbuttons">
+            <button class="button" onclick="window.location.href='/'">
+            Go to Homepage
+            </button>
+
+            <button class="button" onclick="window.location.href='{% url 'activity' %}'">
+            Activity Home
+            </button>
+        </div>
+
+        <h2 class="pagehead">Book Your Ride </h2>
+
+        <div class="float-box">
+            <form method="get" class="input-group" >
+                <input type="text" name="destination" class="input-field"  placeholder="Select Your Destination" value="{{ dest|default:'' }}">
+                <button type="submit" class="button">Search</button>
+            </form>
+
+            {% if buses %}
+            <div class="bus-cards">
+                {% for bus in buses %}
+                  <div class="bus-card">
+                    <h3>{{ bus.bus_name }}</h3>
+                    <p><strong>Route:</strong> {{ bus.route }}</p>
+                    <p><strong>Vacant Seats:</strong> {{ bus.vacant_seats }}</p>
+                    {% if bus.vacant_seats > 0 %}
+                      <a class="book-btn" href="{% url 'vehicles:book_bus' bus.id %}">Book Now</a>
+                    {% else %}
+                      <button class="book-btn disabled" disabled>Full</button>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+        </div>
+
+    </div>
+  </body>
+</html>

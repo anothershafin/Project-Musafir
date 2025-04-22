@@ -23,4 +23,9 @@ urlpatterns = [
     
     #logout
     path('logout/', views.logout_view, name='logout'),
+    #path('send-emergency-text/', views.send_emergency_text, name='send_emergency_text'),
+    path('send-emergency-email/', views.send_emergency_email, name='send_emergency_email'),
+    path('activity/', views.activity_view, name='activity'),
+    path('new-page/', views.new_page_view, name='new_page'),
+    path("upload/", views.upload_image, name="upload_image"),
 ]

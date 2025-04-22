@@ -1,45 +1,81 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Activity Page</title>
-    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}" />
+  </head>
+  <body>
     <div class="full">
-        <div class="nav">
-            <div class="nav-center">
-                <h1>Project Musafir: Your Ride Bus Journey Companion</h1>
-            </div>
-            {% if user.is_authenticated %}
-            <form method="post" action="{% url 'logout' %}" class="logout-form">
-                {% csrf_token %}
-                <button class="button" type="submit">Logout</button>
-            </form>
-            {% endif %}
+      <div class="nav">
+        <div class="nav-center">
+          <h1>Project Musafir: Your Ride Bus Journey Companion</h1>
         </div>
-        
-        <div class="pagehead">
-            <h1>Welcome, {{ request.user.username }} !</h1>
-            <h3>Your journey starts here</h3>
-        </div>
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" class="logout-form">
+          {% csrf_token %}
+          <button class="button" type="submit">Logout</button>
+        </form>
+        {% endif %}
+      </div>
 
-        <div class="hbuttons">
-            <button class="button" onclick="window.location.href='{% url 'profile' %}'">Go to Profile</button>
-        </div>
+      <div class="pagehead">
+        <h1>Welcome, {{ request.user.username }} !</h1>
+        <h3>Your journey starts here</h3>
+      </div>
 
-        <div class="float-box"> 
-            <h2>  Our Services:</h2>
-        </div>
+      <div class="hbuttons">
+        <button class="button" onclick="window.location.href='/'">
+          Go to Homepage
+        </button>
+        <button
+          class="button"
+          onclick="window.location.href='{% url 'profile' %}'"
+        >
+          Go to Profile
+        </button>
+      </div>
 
-        <div class="float-box"> 
-            <h2>  Your Past Rides:</h2>
-        </div>
+      <div class="float-box">
+        <h2>Our Services:</h2>
+        {% if user.userprofile.role == 'drv' %}
+          <a href="{% url 'vehicles:add_bus' %}" class="btn">Add Bus</a>
+        {% elif user.userprofile.role == 'psg' %}
+          <a href="{% url 'vehicles:bookride' %}" class="btn">Book Ride</a>
+        {% endif %}
+      </div>
 
-        <div class="float-box"> 
-            <h2>  Emergency Alerts:</h2>
-        </div>
-</div>
+      <div class="float-box">
+        <h2>Your Past Rides:</h2>
+        {% if past_rides %}
+        <table class="rides-table">
+          <thead>
+            <tr>
+              <th>Departure</th>
+              <th>Destination</th>
+              <th>Fare</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ride in past_rides %}
+            <tr>
+              <td>{{ ride.departure }}</td>
+              <td>{{ ride.destination }}</td>
+              <td>${{ ride.fare }}</td>
+              <td>{{ ride.rating }}/5</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p>No past rides available.</p>
+        {% endif %}
+      </div>
 
-</body>
+      <div class="float-box">
+        <h2>Emergency Alerts:</h2>
+      </div>
+    </div>
+  </body>
 </html>
