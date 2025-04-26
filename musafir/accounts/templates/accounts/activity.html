@@ -24,6 +24,19 @@
         <h3>Your journey starts here</h3>
       </div>
 
+
+      
+
+
+      
+
+
+
+
+
+
+      
+
       <div class="hbuttons">
         <button class="button" onclick="window.location.href='/'">
           Go to Homepage
@@ -44,6 +57,40 @@
           <a href="{% url 'vehicles:bookride' %}" class="btn">Book Ride</a>
         {% endif %}
       </div>
+      
+
+
+
+
+      <!-- Rate Your Ride Box -->
+      <div class="float-box" style="background:#fff;">
+        <h2>Rate Your Ride</h2>
+        <form action="{% url 'rating_confirmation' %}" method="get">
+          <fieldset style="border:none; padding:0;">
+            <legend>Select your rating:</legend>
+            <div style="font-size:2rem; color:gold;">
+              <input type="radio" id="star1" name="rating" value="1">
+              <label for="star1">★</label>
+              <input type="radio" id="star2" name="rating" value="2">
+              <label for="star2">★</label>
+              <input type="radio" id="star3" name="rating" value="3">
+              <label for="star3">★</label>
+              <input type="radio" id="star4" name="rating" value="4">
+              <label for="star4">★</label>
+              <input type="radio" id="star5" name="rating" value="5">
+              <label for="star5">★</label>
+            </div>
+          </fieldset>
+          <button class="button" type="submit">Confirm Rating</button>
+        </form>
+      </div>
+
+
+
+
+
+
+
 
       <div class="float-box">
         <h2>Your Past Rides:</h2>
@@ -73,9 +120,54 @@
         {% endif %}
       </div>
 
+
       <div class="float-box">
         <h2>Emergency Alerts:</h2>
       </div>
+
+
+      <div class="float-box" style="background-color: #fff;">
+        <h2>Road Condition Messages</h2>
+      
+        <!-- Submission form -->
+        <form method="post" style="margin-bottom:1em;">
+          {% csrf_token %}
+          <textarea
+            name="road_condition_message"
+            rows="3"
+            style="width:100%;"
+            placeholder="Share a road/traffic/civil update…"
+            required
+          ></textarea>
+          <button class="button" type="submit">Post Message</button>
+        </form>
+      
+        <!-- ► New Posted Messages section -->
+        <h3>Posted Messages</h3>
+        <div style="max-height:600px; overflow-y:auto; border:1px solid #ccc; padding:0.5em;">
+          {% for msg in road_condition_messages %}
+            <div style="margin-bottom:0.75em;">
+              <small style="color:#555;">
+                {{ msg.timestamp|date:"H:i, d M Y" }} by {{ msg.user.username }}
+              </small>
+              <p style="margin:0.25em 0 0;">
+                {{ msg.message|linebreaksbr }}
+              </p>
+            </div>
+          {% empty %}
+            <p><em>No messages yet.</em></p>
+          {% endfor %}
+        </div>
+      </div>
+      
+
+
+      
+   
+   
+      
+
+      
     </div>
   </body>
 </html>

@@ -46,4 +46,18 @@ class Ride(models.Model):
 
     def __str__(self):
         return f"{self.departure} to {self.destination} (${self.fare})"
+
+
+
+
+#Farhan Hossain Sajid
+class RoadConditionMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.message[:20]}"
+
+
         

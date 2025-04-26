@@ -1,12 +1,15 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-
+#Farhan Hossain Sajid
+from django.views.generic import TemplateView
 urlpatterns = [
     path('', views.home, name='home'),
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
-    path('activity/', views.activity_page, name='activity'),
+    #Farhan Hossain Sajid 
+    #path('activity/', views.activity_page, name='activity'),
+    path('activity/', views.activity_view, name='activity'),
     path('profile/', views.profile_view, name='profile'),
     path('profile/update/', views.profile_update, name='profile_update'),
     
@@ -28,4 +31,15 @@ urlpatterns = [
     path('activity/', views.activity_view, name='activity'),
     path('new-page/', views.new_page_view, name='new_page'),
     path("upload/", views.upload_image, name="upload_image"),
+
+
+
+
+
+    # demo-only: serve the static mockup
+    path('ratings/confirmation/',
+        TemplateView.as_view(template_name='accounts/rating_confirmation.html'),
+        name='rating_confirmation'),
+
+
 ]

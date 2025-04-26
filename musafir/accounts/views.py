@@ -17,6 +17,10 @@ from django.contrib.auth import authenticate
 import random
 #logout
 from django.contrib.auth import logout
+#Farhan Hossain Sajid-alerts
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Ride, RoadConditionMessage
 
 
 #from twilio.rest import Client
@@ -273,11 +277,39 @@ def send_emergency_email(request):
     except Exception as e:
         return HttpResponse(f"Failed to send emergency email: {str(e)}", status=500)
 
+###@login_required
+###def activity_view(request):
+    # Fetch past rides for the logged-in user
+    ###past_rides = Ride.objects.filter(user=request.user).order_by('-date')  # Adjust based on your model
+    ###return render(request, 'accounts/activity.html', {'past_rides': past_rides})
+
+
+
+#Farhan Hossain Sajid-road_condition_messages
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Ride, RoadConditionMessage  # <- updated import
+
 @login_required
 def activity_view(request):
-    # Fetch past rides for the logged-in user
-    past_rides = Ride.objects.filter(user=request.user).order_by('-date')  # Adjust based on your model
-    return render(request, 'accounts/activity.html', {'past_rides': past_rides})
+    # Handle new road-condition message submissions
+    if request.method == 'POST':
+        msg = request.POST.get('road_condition_message', '').strip()
+        if msg:
+            RoadConditionMessage.objects.create(user=request.user, message=msg)
+        return redirect('activity')
+
+    # Fetch user’s past rides
+    past_rides = Ride.objects.filter(user=request.user).order_by('-date')
+    # Fetch all road-condition messages, newest first
+    road_condition_messages = RoadConditionMessage.objects.order_by('-timestamp')
+
+    return render(request, 'accounts/activity.html', {
+        'past_rides': past_rides,
+        'road_condition_messages': road_condition_messages
+    })
+
+
 
 
 
@@ -350,3 +382,42 @@ def map_view(request):
         {"name": "Bus 2", "lat": 23.8150, "lon": 90.4200},
     ]
     return render(request, 'accounts/map.html', {"bus_data": bus_data})
+
+
+
+
+
+# Farhan Hossain Sajid scudo code for driver average rating
+
+#from django.shortcuts import render, get_object_or_404
+#from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.models import User
+#from django.db.models import Avg
+
+# Adjust the import path to where you defined RideRating
+#from vehicles.models import RideRating
+
+#@login_required
+#def driver_average_rating(request, driver_id):
+    # 1. Lookup the driver (ensure they really are a driver)
+    #driver = get_object_or_404(
+        #User,
+        #id=driver_id,
+        #userprofile__role='drv'
+    #)
+
+    # 2. Aggregate all RideRating entries for buses driven by this user
+    #agg = RideRating.objects.filter(
+        #bus__driver=driver
+    #).aggregate(avg_rating=Avg('rating'))
+
+    # 3. Round to 1 decimal if any ratings exist
+    #average = agg['avg_rating']
+    #if average is not None:
+        #average = round(average, 1)
+
+    # 4. Render a simple template (you can mock this up too)
+    #return render(request, 'accounts/driver_average_rating.html', {
+        #'driver': driver,
+        #'average_rating': average,       # None if no ratings yet
+    #})
