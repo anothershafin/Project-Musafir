@@ -228,7 +228,7 @@ button.verified {
   display: inline-block;
   margin-top: 10px;
   padding: 8px 16px;
-  background-color: #007bff;
+  background-color: #008634;
   color: white;
   text-decoration: none;
   border-radius: 10px;
@@ -240,6 +240,6 @@ button.verified {
 }
 
 .book-btn.disabled {
-  background-color: #ccc;
+  background-color: #ff0000;
   cursor: not-allowed;
 }
