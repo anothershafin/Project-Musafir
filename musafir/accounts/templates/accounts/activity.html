@@ -43,6 +43,19 @@
         {% elif user.userprofile.role == 'psg' %}
           <a href="{% url 'vehicles:bookride' %}" class="button">Book Ride</a>
         {% endif %}
+
+        {% if user.is_authenticated %}
+          {% with user_ride=user.busride_set.first %}
+            {% if user_ride %}
+              <p>You are in the <strong>{{ user_ride.bus.bus_name }}</strong> bus.</p>
+
+              <form method="post" action="{% url 'vehicles:get_down' user_ride.bus.id %}">
+                {% csrf_token %}
+                <button type="submit" class="button">Get Down</button>
+              </form>
+            {% endif %}
+          {% endwith %}
+        {% endif %}
       </div>
 
       <div class="float-box">
