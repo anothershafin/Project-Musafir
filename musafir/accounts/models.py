@@ -5,6 +5,7 @@ import string
 from datetime import datetime, timedelta
 from django.utils import timezone
 from django.core.validators import RegexValidator
+from django.db.models import JSONField  # Import JSONField
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -18,7 +19,8 @@ class UserProfile(models.Model):
         null=True,)
     emergency_message = models.TextField(blank=True, null=True)  # New field
     is_student = models.BooleanField(default=False)  
-    
+    bus_data = JSONField(blank=True, null=True, help_text="Store bus data as JSON.")  # New field
+
     def __str__(self):
         return self.user.username
     

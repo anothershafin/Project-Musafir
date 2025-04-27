@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Get Device Coordinates</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #location {
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Device Location</h1>
+    <p id="location">Fetching location...</p>
+
+    <script>
+        function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            document.getElementById('location').innerText = 
+                `Latitude: ${latitude}\nLongitude: ${longitude}`;
+        }
+
+        function showError(error) {
+            const location = document.getElementById('location');
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    location.innerText = "User denied the request for Geolocation.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    location.innerText = "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    location.innerText = "The request to get user location timed out.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    location.innerText = "An unknown error occurred.";
+                    break;
+            }
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            document.getElementById('location').innerText = 
+                "Geolocation is not supported by this browser.";
+        }
+    </script>
+</body>
+</html>

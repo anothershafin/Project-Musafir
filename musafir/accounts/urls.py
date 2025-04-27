@@ -28,4 +28,6 @@ urlpatterns = [
     path('activity/', views.activity_view, name='activity'),
     path('new-page/', views.new_page_view, name='new_page'),
     path("upload/", views.upload_image, name="upload_image"),
+    path('update-location/', views.update_location, name='update_location'),
+    path('home1/', views.home1, name='home1'),
 ]

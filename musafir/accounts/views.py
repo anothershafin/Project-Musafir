@@ -1,8 +1,7 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from .models import UserProfile
 from django.contrib.auth.decorators import login_required
 #for api
 from rest_framework.decorators import api_view , permission_classes 
@@ -12,36 +11,104 @@ from .serializers import SignupSerializer, LoginRequestSerializer, OTPVerifySeri
 from rest_framework.permissions import IsAuthenticated
 #2fa
 from django.core.mail import send_mail
-from .models import EmailOTP, UserProfile
 from django.contrib.auth import authenticate
 import random
 #logout
 from django.contrib.auth import logout
-
-
 #from twilio.rest import Client
-
 from django.core.mail import send_mail
-
-from .models import Ride
-
-
-
-import cv2
-import pytesseract
-import re
-from django.shortcuts import render
+import cv2, pytesseract, re
 from django.core.files.storage import FileSystemStorage
+from .models import UserProfile,  EmailOTP, Ride
 
+def home1(request):
+    return render(request, 'accounts/home1.html')
+
+# @login_required
+# def update_location(request):
+#     if request.method == 'POST' and request.user.userprofile.role == 'drv':
+#         lat = request.POST.get('lat')
+#         lon = request.POST.get('lon')
+#         if lat and lon:
+#             location = f"{lat},{lon}"
+#             request.user.userprofile.bus_data = location
+#             request.user.userprofile.save()
+#             return JsonResponse({'status': 'success', 'message': 'Location updated successfully.'})
+#     return JsonResponse({'status': 'error', 'message': 'Invalid request.'})
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+import json
+
+@login_required
+def update_location(request):
+    if request.method == 'POST' and request.user.userprofile.role == 'drv':
+        lat = request.POST.get('lat')
+        lon = request.POST.get('lon')
+
+        if lat and lon:
+            try:
+                lat = float(lat)
+                lon = float(lon)
+
+                bus_name = f"Bus {request.user.username}"
+
+                # Load the data safely from string to list of dicts
+                buses_raw = request.user.userprofile.bus_data or '[]'
+                buses = json.loads(buses_raw) if isinstance(buses_raw, str) else buses_raw
+
+                # Check if this driver's bus is already in the list
+                updated = False
+                for bus in buses:
+                    if bus["name"] == bus_name:
+                        bus["lat"] = lat
+                        bus["lon"] = lon
+                        updated = True
+                        break
+
+                if not updated:
+                    buses.append({
+                        "name": bus_name,
+                        "lat": lat,
+                        "lon": lon
+                    })
+
+                # Save as a list (or json.dumps if you're storing as string)
+                request.user.userprofile.bus_data = buses
+                request.user.userprofile.save()
+
+                return JsonResponse({'status': 'success', 'message': 'Location updated successfully.'})
+
+            except ValueError:
+                return JsonResponse({'status': 'error', 'message': 'Invalid coordinates.'})
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request.'})
 
 
 # Create your views here.
 def home(request):
-    # Example static coordinates for now
-    bus_data = [
-        {"name": "Bus 1", "lat": 23.8103, "lon": 90.4125},
-        {"name": "Bus 2", "lat": 23.8150, "lon": 90.4200},
-    ]
+    # Fetch bus data from UserProfiles where role is 'driver'
+    drivers = UserProfile.objects.filter(role='drv')
+    bus_data = []
+
+    for driver in drivers:
+        if driver.bus_data:  # Ensure bus_data is not None
+            bus_data.extend(driver.bus_data)  # Append the driver's bus data to the list
+
+    return render(request, 'accounts/home.html', {"bus_data": bus_data})
+
+
+def map_view(request):
+    # Fetch bus data from UserProfiles where role is 'driver'
+    drivers = UserProfile.objects.filter(role='drv')
+    bus_data = []
+
+    for driver in drivers:
+        if driver.bus_data:  # Ensure bus_data is not None
+            bus_data.extend(driver.bus_data)  # Append the driver's bus data to the list
+
     return render(request, 'accounts/home.html', {"bus_data": bus_data})
 
 def signup_view(request):
@@ -346,7 +413,6 @@ def upload_image(request):
 def map_view(request):
     # Example static coordinates for now
     bus_data = [
-        {"name": "Bus 1", "lat": 23.8103, "lon": 90.4125},
-        {"name": "Bus 2", "lat": 23.8150, "lon": 90.4200},
+        {"name": "Bus 1", "lat": 23.7292, "lon": 90.4072},
     ]
     return render(request, 'accounts/map.html', {"bus_data": bus_data})
