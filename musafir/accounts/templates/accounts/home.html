@@ -27,17 +27,36 @@
         flex: 1;
         background-color: #f0f0f0; /* Optional: content area styling */
       }
+      .button {
+        width: 200px;
+        padding: 10px 30px;
+        cursor: pointer;
+        display: block;
+        background: rgb(59, 59, 59);
+        border: 0;
+        outline: none;
+        border-radius: 30px;
+        color: white;
+      }
+      .hbuttons {
+        display: flex;
+        justify-content: flex-start;
+        gap: 10px;
+        
+        padding-left: 10px;
+      }
 
       #map {
         height: 90%;
         width: 100%;
       }
+      
     </style>
   </head>
   <body>
     <div class="content">
       <div class="full">
-        <h2 class="nav">Project Musafir: Your Ride Bus Journey Companion</h2>
+        <h1 class="nav">Project Musafir: Your Ride Bus Journey Companion</h1>
 
         <div class="hbuttons">
           {% if user.is_authenticated %}

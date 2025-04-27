@@ -39,9 +39,9 @@
       <div class="float-box">
         <h2>Our Services:</h2>
         {% if user.userprofile.role == 'drv' %}
-          <a href="{% url 'vehicles:add_bus' %}" class="btn">Add Bus</a>
+          <a href="{% url 'vehicles:add_bus' %}" class="button">Add Bus</a>
         {% elif user.userprofile.role == 'psg' %}
-          <a href="{% url 'vehicles:bookride' %}" class="btn">Book Ride</a>
+          <a href="{% url 'vehicles:bookride' %}" class="button">Book Ride</a>
         {% endif %}
       </div>
 
