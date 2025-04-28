@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .forms import BusForm
-from .models import Bus
+from .models import Bus, Busride
 
 # Create your views here.
+
 
 @login_required
 def add_bus(request):
@@ -45,4 +46,17 @@ def book_bus(request, bus_id):
     if bus.vacant_seats > 0:
         bus.vacant_seats -= 1
         bus.save()
+        Busride.objects.create(user=request.user, bus=bus)
     return redirect('vehicles:bookride')
+
+@login_required
+def get_down(request, bus_id):
+    bus = get_object_or_404(Bus, id=bus_id)
+    ride = Busride.objects.filter(user=request.user, bus=bus).first()
+
+    if ride:
+        bus.vacant_seats += 1
+        bus.save()
+        ride.delete()
+
+    return redirect('activity')

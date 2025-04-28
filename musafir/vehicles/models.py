@@ -16,3 +16,11 @@ class Bus(models.Model):
 
     def __str__(self):
         return f"{self.bus_name} ({self.route})"
+    
+class Busride(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username} -> {self.bus.bus_name}"
+    
