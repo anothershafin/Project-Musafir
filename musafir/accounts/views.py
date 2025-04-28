@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import UserProfile, Ride, EmailOTP
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 #for api
 from rest_framework.decorators import api_view , permission_classes 
 from rest_framework.response import Response
@@ -21,6 +22,29 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 # Create your views here.
+def home1(request):
+    return render(request, 'accounts/home1.html')
+
+@csrf_exempt
+@login_required
+def save_user_location(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            latitude = data.get("latitude")
+            longitude = data.get("longitude")
+
+            # Get or create the user's profile
+            profile, created = UserProfile.objects.get_or_create(user=request.user)
+            profile.latitude = latitude
+            profile.longitude = longitude
+            profile.save()
+
+            return JsonResponse({"status": "success", "message": "Location updated"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
 def create_checkout_session(request):
     if request.method == "POST":
         try:

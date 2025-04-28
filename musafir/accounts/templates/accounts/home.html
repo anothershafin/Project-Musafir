@@ -121,6 +121,41 @@
 
       </div>
     </div>
+      <script>
+        function sendLocation(){
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              const latitude = position.coords.latitude;
+              const longitude = position.coords.longitude;
+      
+              console.log("Latitude:", latitude);
+              console.log("Longitude:", longitude);
+              // Optional: Send location to backend (for drivers)
+              
+              fetch('/save_location/', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ latitude, longitude }),
+              });
+              
+            },
+            function (error) {
+              console.error("Error getting location:", error);
+            }
+          );
+        } else {
+          alert("Geolocation is not supported by your browser.");
+        }        
+
+      }
+      sendLocation(); // Call the function to send location on page load
+      setInterval(sendLocation, 60000); // Update location every minute
+    </script>
+    
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
