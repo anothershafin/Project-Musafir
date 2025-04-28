@@ -1,9 +1,10 @@
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
-from .models import UserProfile
+from django.contrib.auth import authenticate, login, logout
+from .models import UserProfile, Ride, EmailOTP
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 #for api
 from rest_framework.decorators import api_view , permission_classes 
 from rest_framework.response import Response
@@ -12,37 +13,76 @@ from .serializers import SignupSerializer, LoginRequestSerializer, OTPVerifySeri
 from rest_framework.permissions import IsAuthenticated
 #2fa
 from django.core.mail import send_mail
-from .models import EmailOTP, UserProfile
-from django.contrib.auth import authenticate
-import random
-#logout
-from django.contrib.auth import logout
-
-
-#from twilio.rest import Client
-
-from django.core.mail import send_mail
-
-from .models import Ride
-
-
-
-import cv2
-import pytesseract
-import re
-from django.shortcuts import render
+import random, cv2, pytesseract, re, json, stripe
 from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 # Create your views here.
+def create_checkout_session(request):
+    if request.method == "POST":
+        try:
+            # Simulate a bus fare amount (e.g., $10.00)
+            fare_amount = 50  # Amount in cents (e.g., $10.00 = 1000 cents)
+
+            # Create a Stripe Checkout Session
+            session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                line_items=[
+                    {
+                        "price_data": {
+                            "currency": "usd",
+                            "product_data": {
+                                "name": "Bus Fare Payment",
+                            },
+                            "unit_amount": fare_amount,
+                        },
+                        "quantity": 1,
+                    },
+                ],
+                mode="payment",
+                success_url="http://127.0.0.1:8000/payment-success/",
+                cancel_url="http://127.0.0.1:8000/payment-cancel/",
+            )
+            return JsonResponse({"id": session.id})
+        except Exception as e:
+            return JsonResponse({"error": str(e)})
+    return JsonResponse({"error": "Invalid request method"})
+
+def payment_success(request):
+    return render(request, "accounts/payment_success.html")
+
+def payment_cancel(request):
+    return render(request, "accounts/payment_cancel.html")
+
+def get_driver_locations(request):
+    drivers = UserProfile.objects.filter(role='drv').values('user__username', 'latitude', 'longitude')
+    return JsonResponse({'drivers': list(drivers)})
+
 def home(request):
-    # Example static coordinates for now
-    bus_data = [
-        {"name": "Bus 1", "lat": 23.8103, "lon": 90.4125},
-        {"name": "Bus 2", "lat": 23.8150, "lon": 90.4200},
-    ]
-    return render(request, 'accounts/home.html', {"bus_data": bus_data})
+    return render(request, 'accounts/home.html', {"stripe_public_key": settings.STRIPE_PUBLIC_KEY})
+
+
+
+
+@csrf_exempt
+def update_driver_location(request, user_id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        latitude = data.get("latitude")
+        longitude = data.get("longitude")
+
+        try:
+            user_profile = UserProfile.objects.get(user_id=user_id, role="drv")
+            user_profile.latitude = latitude
+            user_profile.longitude = longitude
+            user_profile.save()
+            return JsonResponse({"status": "success", "message": "Location updated successfully."})
+        except UserProfile.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Driver not found."})
+    return JsonResponse({"status": "error", "message": "Invalid request method."})
 
 def signup_view(request):
     if request.method == 'POST':

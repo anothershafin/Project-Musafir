@@ -28,4 +28,9 @@ urlpatterns = [
     path('activity/', views.activity_view, name='activity'),
     path('new-page/', views.new_page_view, name='new_page'),
     path("upload/", views.upload_image, name="upload_image"),
+    path('update-driver-location/<int:user_id>/', views.update_driver_location, name='update_driver_location'),
+    path('api/driver-locations/', views.get_driver_locations, name='get_driver_locations'),
+    path("create-checkout-session/", views.create_checkout_session, name="create_checkout_session"),
+    path("payment-success/", views.payment_success, name="payment_success"),
+    path("payment-cancel/", views.payment_cancel, name="payment_cancel"),
 ]

@@ -11,13 +11,18 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=20)
     role = models.CharField(max_length=10, choices=[('psg', 'Passenger'), ('drv', 'Driver')])
-    is_two_step_verified = models.BooleanField(default=False)  # 👈 Add this here
+    is_two_step_verified = models.BooleanField(default=False) 
     emergency_contact = models.CharField(
         max_length=154,
         blank=True,
         null=True,)
-    emergency_message = models.TextField(blank=True, null=True)  # New field
+    emergency_message = models.TextField(blank=True, null=True) 
     is_student = models.BooleanField(default=False)  
+    ledger = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  
+    avg_rating = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True) 
+    condition = models.CharField(max_length=100, blank=True, null=True)  
+    latitude = models.FloatField(blank=True, null=True)  
+    longitude = models.FloatField(blank=True, null=True) 
     
     def __str__(self):
         return self.user.username
