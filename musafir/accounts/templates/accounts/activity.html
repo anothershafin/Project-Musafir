@@ -56,11 +56,38 @@
             {% endif %}
           {% endwith %}
         {% endif %}
+
       </div>
 
       <div class="float-box">
         <h2>Your Past Rides:</h2>
-        {% if past_rides %}
+
+        <div class="card-container">
+          {% for trip in trips %}
+          <div class="card">
+              <h3>{{ trip.bus.bus_name }}</h3>
+              <p>Fare: {{ trip.fare }} Tk</p>
+              <p>Status: {% if trip.payment_status %} Paid {% else %} Unpaid {% endif %}</p>
+        
+              {% if not trip.payment_status %}
+              <form method="POST" action="{% url 'make_payment' trip.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="button">Make Payment</button>
+              </form>
+              {% endif %}
+              
+          </div>
+          {% empty %}
+          <p>No trips found.</p>
+          {% endfor %}
+
+        <button class="button" onclick="window.location.href='{% url 'past_rides' %}'">
+            View All Past Rides
+        </button>
+
+        </div>
+
+        {% comment %} {% if past_rides %}
         <table class="rides-table">
           <thead>
             <tr>
@@ -83,7 +110,7 @@
         </table>
         {% else %}
         <p>No past rides available.</p>
-        {% endif %}
+        {% endif %} {% endcomment %}
       </div>
 
       <div class="float-box">

@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .forms import BusForm
 from .models import Bus, Busride
+from trips.models import Trip
 
 # Create your views here.
 
@@ -47,6 +48,13 @@ def book_bus(request, bus_id):
         bus.vacant_seats -= 1
         bus.save()
         Busride.objects.create(user=request.user, bus=bus)
+        Trip.objects.create(
+                user=request.user,
+                bus=bus,
+                destination=bus.stoppage3,
+                fare=30,
+                payment_status=False
+            )
     return redirect('vehicles:bookride')
 
 @login_required

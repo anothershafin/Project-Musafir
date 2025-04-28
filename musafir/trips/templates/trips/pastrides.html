@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Activity Page</title>
+    <link rel="stylesheet" href="{% static 'accounts/styles.css' %}" />
+</head>
+<body>
+    <div class="full">
+        <div class="nav">
+            <div class="nav-center">
+                <h1>Project Musafir: Your Ride Bus Journey Companion</h1>
+            </div>
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button class="button" type="submit">Logout</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <div class="pagehead">
+            <h1>Welcome, {{ request.user.username }} !</h1>
+            <h3>You can access your payment history here</h3>
+        </div>
+
+        <div class="hbuttons">
+            <button class="button" onclick="window.location.href='/'">
+            Go to Homepage
+            </button>
+            <button
+            class="button"
+            onclick="window.location.href='{% url 'profile' %}'"
+            >
+            Go to Profile
+            </button>
+            <button
+            class="button"
+            onclick="window.location.href='{% url 'activity' %}'"
+            >
+            Activity Home
+            </button>
+        </div>
+
+<div class="card-container">
+    {% for trip in trips %}
+    <div class="card">
+        <h3>{{ trip.bus.bus_name }}</h3>
+        <p>Fare: {{ trip.fare }} Tk</p>
+        <p>Status: {% if trip.payment_status %} Paid {% else %} Unpaid {% endif %}</p>
+    </div>
+    {% empty %}
+    <p>No rides found.</p>
+    {% endfor %}
+</div>
+    <div class="float-box">
+        <h3>Summary</h3>
+<p>Total Bill: {{ total_bill }} Tk</p>
+<p>Paid Amount: {{ paid_amount }} Tk</p>
+<p>Unpaid Amount: {{ unpaid_amount }} Tk</p>
+    </div>
+</div>
+
+
+</body>
+</html>

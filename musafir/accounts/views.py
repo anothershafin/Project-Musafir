@@ -24,6 +24,7 @@ from django.contrib.auth import logout
 from django.core.mail import send_mail
 
 from .models import Ride
+from trips.models import Trip
 
 
 
@@ -123,7 +124,10 @@ def profile_update(request):
     
 @login_required
 def activity_page(request):
-    return render(request, 'accounts/activity.html')
+    trips = Trip.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'accounts/activity.html', {
+        'trips': trips,
+    })
 
 #2fa
 def send_otp(request):
