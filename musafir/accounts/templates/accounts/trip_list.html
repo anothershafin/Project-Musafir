@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passenger Trips</title>
+    <script>
+        async function completeTrip(tripId) {
+            const response = await fetch(`/complete-trip/${tripId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert(`Trip completed! Fare: $${data.fare}, Remaining Balance: $${data.remaining_balance}`);
+                document.getElementById(`trip-${tripId}`).remove();
+            } else {
+                alert(data.message);
+            }
+        }
+    </script>
+</head>
+<body>  
+    <h1>Trips for {{ user.name }}</h1>
+    <p>Ledger Balance: {{ user.ledger_balance }} Tk.</p>
+    <ul>
+        <button onclick="completeTrip({{ trip.id }})">Complete Trip</button>
+        {% for trip in trips %}
+            <li id="trip-{{ trip.id }}">
+                Trip #{{ trip.id }} - Distance: {{ trip.distance }} km - 
+                <button onclick="completeTrip({{ trip.id }})">Complete Trip</button>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

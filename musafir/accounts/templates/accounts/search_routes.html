@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Find Route</title>
+
+</head>
+<body>
+    <h1>Find Available Routes</h1>
+    <form method="get" action="">
+        <label for="pickup">Pickup Point:</label>
+        <input type="text" id="pickup" name="pickup" required>
+        <label for="destination">Destination Point:</label>
+        <input type="text" id="destination" name="destination" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if routes %}
+        <h2>Available Routes:</h2>
+        <ul>
+            {% for route in routes %}
+                <li>{{ route.start_point }} to {{ route.end_point }}</li>
+            {% endfor %}
+        </ul>
+    {% elif routes is not None %}
+        <p>No routes found for the given pickup and destination points.</p>
+    {% endif %}
+</body>
+</html>

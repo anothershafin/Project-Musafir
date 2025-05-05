@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from .views import *
 from . import views
 
 urlpatterns = [
@@ -9,6 +10,13 @@ urlpatterns = [
     path('activity/', views.activity_page, name='activity'),
     path('profile/', views.profile_view, name='profile'),
     path('profile/update/', views.profile_update, name='profile_update'),
+    #path('map/', views.route_map, name='route_map'),
+    #path("routes/map/", views.route_map, name="route_map"),
+    #path("search/", views.search_routes, name="search_routes"),
+    #path('passenger/<int:passenger_id>/trips/', views.passenger_trips, name='passenger_trips'),
+    #path('complete-trip/<int:trip_id>/', views.complete_trip, name='complete_trip'),
+#
+#
     
     #for API
     path('api/signup/', views.api_signup, name='api_signup'),
@@ -27,3 +35,5 @@ urlpatterns = [
     path('send-emergency-email/', views.send_emergency_email, name='send_emergency_email'),
     path('activity/', views.activity_view, name='activity'),
 ]
+
+

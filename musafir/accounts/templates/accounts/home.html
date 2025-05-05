@@ -42,6 +42,36 @@
         </button>
         {% endif %}
       </div>
+
+      
+      
+      <!-- Add Search Bar -->
+      <div class="search-container">
+        <form method="get" action="{% url 'search_routes' %}">
+          <input
+            type="text"
+            name="pickup"
+            placeholder="Enter Pickup Location"
+            class="search-input"
+          />
+          <input
+            type="text"
+            name="destination"
+            placeholder="Enter Destination"
+            class="search-input"
+          />
+          <button type="submit" class="search-button">Search</button>
+        </form>
+      </div>
+
+      
+        
+      
+
+    
     </div>
+
+    
+    
   </body>
 </html>

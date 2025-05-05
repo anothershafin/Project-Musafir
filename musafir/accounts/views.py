@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User 
 from django.contrib.auth import authenticate, login
 from .models import UserProfile
 from django.contrib.auth.decorators import login_required
@@ -12,18 +12,32 @@ from .serializers import SignupSerializer, LoginRequestSerializer, OTPVerifySeri
 from rest_framework.permissions import IsAuthenticated
 #2fa
 from django.core.mail import send_mail
-from .models import EmailOTP, UserProfile
+from .models import EmailOTP, UserProfile, Route, Ride
 from django.contrib.auth import authenticate
 import random
 #logout
 from django.contrib.auth import logout
+from django.views.generic import ListView
+from .models import *
+from django.views import View
+
+
 
 
 #from twilio.rest import Client
 
 from django.core.mail import send_mail
 
-from .models import Ride
+
+
+#bus route
+from django.http import JsonResponse
+
+
+
+#post paid
+from django.shortcuts import get_object_or_404
+#from .models import User, Trip
 
 
 # Create your views here.
@@ -265,3 +279,83 @@ def activity_view(request):
     # Fetch past rides for the logged-in user
     past_rides = Ride.objects.filter(user=request.user).order_by('-date')  # Adjust based on your model
     return render(request, 'accounts/activity.html', {'past_rides': past_rides})
+
+# Route Map View
+    
+
+# def find_route(request):
+#     routes = None
+#     if request.method == "GET":
+#         pickup = request.GET.get('pickup')
+#         destination = request.GET.get('destination')
+#         if pickup and destination:
+#             # Query the Route model for matching routes
+#             routes = Route.objects.filter(start_point__icontains=pickup, end_point__icontains=destination)
+#     return render(request, 'accounts/search_routes.html', {'routes': routes})
+
+def search_routes(request):
+
+    pickup = request.GET.get('pickup', '').strip()
+    destination = request.GET.get('destination', '').strip()
+
+    routes = Route.objects.all()
+
+    if pickup:
+        routes = routes.filter(start_point__icontains=pickup)
+    if destination:
+        routes = routes.filter(end_point__icontains=destination)
+
+    route_data = [
+        {
+            "start_point": route.start_point,
+            "end_point": route.end_point,
+            "driver": route.driver.name,
+            "company": route.company.name,
+            "coordinates": route.map_coordinates,  # Assuming GeoJSON or [lat, lng] pairs
+        }
+        for route in routes
+    ]
+
+    return render(request, "accounts/search_routes.html", {"routes": route_data, "pickup": pickup, "destination": destination})
+
+def route_map(request):
+
+    routes = Route.objects.all()
+    route_data = [
+        {
+            "start_point": route.start_point,
+            "end_point": route.end_point,
+            "coordinates": {
+                "lat": route.map_coordinates.y,
+                "lng": route.map_coordinates.x,
+            },
+            "driver": route.driver.name,
+            "company": route.company.name,
+        }
+        for route in routes
+    ]
+    return render(request, "accounts/search_routes.html", {"routes": route_data})
+
+#post paid
+def complete_trip(request, trip_id=2):
+    trip = get_object_or_404(Ride, id=trip_id)
+    if trip.is_completed:
+        return JsonResponse({"message": "Trip is already completed."}, status=400)
+
+    trip.complete_trip()
+    return JsonResponse({
+        "message": "Trip completed successfully.",
+        "fare": float(trip.fare),
+        "remaining_balance": float(trip.user.ledger_balance),
+    })
+
+
+def passenger_trips(request, passenger_id=1):
+    user = get_object_or_404(Ride, id=passenger_id)
+    completed_trips = user.trips.filter(is_completed=False)
+    return render(request, 'accounts/trip_list.html', {
+        'passenger': user,
+        'completed_trips': completed_trips,
+    })
+
+
